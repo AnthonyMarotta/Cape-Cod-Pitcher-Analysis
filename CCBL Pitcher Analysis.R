@@ -346,9 +346,9 @@ server <- function(input, output, session) {
       group_by(Date, OpposingTeam) %>%  # Group by Date and OpposingTeam
       summarise(
         Pitches = n(),
-        PA = sum(PitchCall %in% c("InPlay") | KorBB %in% c("Strikeout", "Walk", "HitbyPitch")),
-        AB = sum((PitchCall %in% c("InPlay") | KorBB %in% c("Strikeout")) & !KorBB %in% c("Walk", "HitbyPitch") & !PlayResult %in% c("Sacrifice")),
-        IP = round(sum((OutsOnPlay == "1" | KorBB == "Strikeout")) / 3, 2),
+        PA = sum(PitchCall %in% c("InPlay", "HitByPitch") | KorBB %in% c("Strikeout", "Walk")),
+        AB = sum((PitchCall %in% c("InPlay") | KorBB %in% c("Strikeout")) & !PitchCall %in% c("HitByPitch") & !KorBB %in% c("Walk") & !PlayResult %in% c("Sacrifice")),
+        IP = round(sum((OutsOnPlay == "1" | OutsOnPlay == "2" | KorBB == "Strikeout")) / 3, 2),
         EarnedRuns = sum(ifelse(PlayResult != "Error", RunsScored, 0), na.rm = TRUE), # Calculate earned runs per game
         ERA = round((sum(ifelse(PlayResult != "Error", RunsScored, 0), na.rm = TRUE) / sum((OutsOnPlay == "1" | KorBB == "Strikeout") / 3)) * 9, 2), # Calculate ERA per game
         H = sum(PlayResult %in% c("Single", "Double", "Triple", "HomeRun")),
